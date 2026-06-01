@@ -452,9 +452,13 @@ function submitTopup() {
 window.onload = function() {
   checkUserSession();
 };
-// โหลดข้อมูลสินค้าเมื่อหน้าเว็บพร้อมทำงาน
+  <script>
     window.addEventListener('DOMContentLoaded', function() {
-        renderProducts();
+        if (typeof renderProducts === 'function') {
+            renderProducts();
+        }
+    });
+</script>
     });
 </script>
 </body>
