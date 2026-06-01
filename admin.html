@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GrowthFile Shop — แผงควบคุมผู้ดูแลระบบหลังบ้าน</title>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green: #00C896; --bg: #0B0F1A; --bg2: #111827; --bg3: #1A2234; --border: rgba(255,255,255,0.07); --text: #F0F4FF; --text2: #8B9BB8; --orange: #FF9F43; --blue: #4A9EFF; --radius: 12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'IBM Plex Sans Thai',sans-serif;background:var(--bg);color:var(--text);padding:24px}
+input,select,button{width:100%;background:var(--bg3);border:1px solid rgba(255,255,255,0.12);border-radius:6px;padding:10px;color:var(--text);margin-bottom:12px}
+button{background:var(--green);color:#0B0F1A;font-weight:700;cursor:pointer;border:none}
+.admin-panel{display:none;max-width:1200px;margin:0 auto}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.stat-card{background:var(--bg2);padding:20px;border-radius:var(--radius);border:1px solid var(--border)}
+.grid-layout{display:grid;grid-template-columns:350px 1fr;gap:24px}
+.card{background:var(--bg2);padding:24px;border-radius:var(--radius);border:1px solid var(--border);margin-bottom:20px}
+h3{font-family:'Prompt',sans-serif;margin-bottom:16px}
+table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+th,td{padding:12px 10px;text-align:left;border-bottom:1px solid var(--border)}
+th{color:var(--text2)}
+.login-box{max-width:380px;margin:100px auto;background:var(--bg2);padding:32px;border-radius:var(--radius);border:1px solid var(--border);text-align:center}
+</style>
+</head>
+<body>
+
+<div id="admin-login" class="login-box">
+  <h2 style="font-family:'Prompt',sans-serif;margin-bottom:8px">👑 ผู้ดูแลระบบส่วนหลังบ้าน</h2>
+  <p style="font-size:12px;color:var(--text2);margin-bottom:20px">กรุณาระบุรหัสยศลับเฉพาะส่วนตัวของแอดมินเท่านั้น</p>
+  <input type="password" id="adm-pass" placeholder="ระบุรหัสผ่านยศผู้ดูแล">
+  <button onclick="checkAdminLogin()">เข้าสู่แผงควบคุมหลัก</button>
+</div>
+
+<div id="admin-dashboard" class="admin-panel">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+    <h1 style="font-family:'Prompt',sans-serif">📊 Dashboard ควบคุมบริษัทหลังบ้าน (V2.1)</h1>
+    <button onclick="adminLogout()" style="width:auto;padding:6px 16px;background:rgba(255,90,90,0.15);color:#FF5A5A">ออกจากระบบปลอดภัย</button>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card"><h5>ยอดจำหน่ายเสร็จสิ้น</h5><h2 style="color:var(--green)" id="st-rev">฿0</h2></div>
+    <div class="stat-card"><h5>ออเดอร์รวมในระบบ</h5><h2 style="color:var(--orange)" id="st-count">0</h2></div>
+    <div class="stat-card"><h5>รายการสต็อกรวม</h5><h2 id="st-stock" style="color:var(--blue)">0 รายการ</h2></div>
+    <div class="stat-card"><h5>ยอดการเปิดเข้าชมสินค้ารวม</h5><h2 id="st-views" style="color:#fff">0 ครั้ง</h2></div>
+  </div>
+
+  <div class="grid-layout">
+    <div class="card">
+      <h3>➕ เพิ่มสินค้าลงสต็อก</h3>
+      <label style="font-size:12px;color:var(--text2)">ชื่อตัวสินค้า/E-book</label>
+      <input type="text" id="p-name" placeholder="เช่น สรุปกลยุทธ์ Mindset การลงทุน">
+      
+      <label style="font-size:12px;color:var(--text2)">ราคาจำหน่าย (บาท)</label>
+      <input type="number" id="p-price" placeholder="เช่น 59">
+      
+      <label style="font-size:12px;color:var(--text2)">ลิงก์รูปภาพปกสินค้า (หรือวาง URL ภาพ)</label>
+      <input type="url" id="p-cover" placeholder="https://example.com/cover.jpg">
+      
+      <label style="font-size:12px;color:var(--text2)">หมวดหมู่สัดส่วน</label>
+      <select id="p-cat">
+        <option value="Mind set finance">Mind set finance</option>
+        <option value="การพัฒนาตัวเอง">การพัฒนาตัวเอง</option>
+        <option value="อื่นๆ">อื่นๆที่เกี่ยวกับการพัฒนาตัวเอง</option>
+      </select>
+      
+      <label style="font-size:12px;color:var(--text2)">ลิงก์ไฟล์หลัก (PDF ต้นฉบับจริง)</label>
+      <input type="url" id="p-pdf" placeholder="https://example.com/file.pdf">
+      
+      <label style="font-size:12px;color:var(--text2)">ลิงก์รูปแบบอื่นๆ (เช่น คอร์สเรียน/โฟลเดอร์ไดรฟ์/เสริม)</label>
+      <input type="url" id="p-extra" placeholder="https://youtube.com/... หรือคอร์สเสริม">
+      
+      <button onclick="saveStock()">💾 บันทึกสินค้าเข้าสต็อกบริษัท</button>
+    </div>
+
+    <div>
+      <div class="card" style="border-color: var(--blue)">
+        <h3>👥 รายชื่อลูกค้าระบบสมาชิกและการเงิน</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>ชื่อผู้ใช้งาน (Username)</th>
+              <th>จำนวนเงินคงเหลือในกระเป๋า</th>
+            </tr>
+          </thead>
+          <tbody id="users-table"></tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h3>📦 คลังสินค้าและสถิติการเปิดเข้าชมแยกตามไอเทม</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>ชื่อสินค้า</th>
+              <th>หมวดหมู่</th>
+              <th>ราคา</th>
+              <th>สถิติคนดู</th>
+              <th>คะแนนรีวิว</th>
+              <th>การจัดการ</th>
+            </tr>
+          </thead>
+          <tbody id="stock-table"></tbody>
+        </table>
+      </div>
+
+      <div class="card" style="border-color: var(--green)">
+        <h3>🪙 ตารางคำขออนุมัติเติมเงินเข้ากระเป๋าของลูกค้า</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>เลขอ้างอิง</th>
+              <th>ชื่อผู้แจ้ง</th>
+              <th>วัน-เวลาแจ้ง</th>
+              <th>ยอดเติมเงิน</th>
+              <th>สถานะปัจจุบัน</th>
+              <th>คำสั่งแอดมิน</th>
+            </tr>
+          </thead>
+          <tbody id="topup-table"></tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h3>📬 ประวัติคำสั่งซื้อสำเร็จผ่านการตัดกระเป๋าเงิน</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>รหัสออเดอร์</th>
+              <th>ผู้ซื้อบัญชี</th>
+              <th>ยอดที่จ่าย</th>
+              <th>วันเวลาชำระ</th>
+              <th>สถานะ</th>
+            </tr>
+          </thead>
+          <tbody id="order-table"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var AMIN_PIN = "ALOCK02543";
+
+function checkAdminLogin() {
+  var pass = document.getElementById('adm-pass').value;
+  if(pass === AMIN_PIN) {
+    localStorage.setItem('GF_ADMIN_LOGGED', 'true');
+    showPanel();
+  } else {
+    alert('รหัสผ่านยศผู้ดูแลระบบไม่ถูกต้อง!');
+  }
+}
+
+function showPanel() {
+  document.getElementById('admin-login').style.display = 'none';
+  document.getElementById('admin-dashboard').style.display = 'block';
+  renderDashboard();
+}
+
+function adminLogout() {
+  localStorage.removeItem('GF_ADMIN_LOGGED');
+  location.reload();
+}
+
+function getStock() { return JSON.parse(localStorage.getItem('GF_STOCK')) || []; }
+function getOrders() { return JSON.parse(localStorage.getItem('GF_ORDERS')) || []; }
+// อัปเดตเพื่อให้ดึงข้อมูลจากระบบสมาชิกกลาง
+function getUsers() { return JSON.parse(localStorage.getItem('GF_USERS')) || {}; }
+function getTopups() { return JSON.parse(localStorage.getItem('GF_TOPUPS')) || []; }
+
+function saveStock() {
+  var nm = document.getElementById('p-name').value.trim();
+  var pr = document.getElementById('p-price').value.trim();
+  var cv = document.getElementById('p-cover').value.trim();
+  var ct = document.getElementById('p-cat').value;
+  var pdf = document.getElementById('p-pdf').value.trim();
+  var ext = document.getElementById('p-extra').value.trim();
+
+  if(!nm || !pr || !pdf) { alert('กรุณาระบุข้อมูลจำเป็น (ชื่อ, ราคา, ลิงก์ไฟล์ PDF จริง) ให้ครบถ้วน'); return; }
+
+  var stock = getStock();
+  stock.push({ id: 'P-'+Date.now(), nm: nm, pr: pr, cv: cv, cat: ct, pdf: pdf, extralink: ext, views: 0, ratings: [] });
+  localStorage.setItem('GF_STOCK', JSON.stringify(stock));
+
+  alert('ลงบันทึกสินค้าชุดใหม่เพิ่มลงระบบเรียบร้อย!');
+  document.getElementById('p-name').value = '';
+  document.getElementById('p-price').value = '';
+  document.getElementById('p-cover').value = '';
+  document.getElementById('p-pdf').value = '';
+  document.getElementById('p-extra').value = '';
+  renderDashboard();
+}
+
+function delProduct(id) {
+  if(!confirm('ยืนยันที่จะลบสินค้านี้ออกจากฐานข้อมูลหลักหรือไม่?')) return;
+  var stock = getStock().filter(p => p.id !== id);
+  localStorage.setItem('GF_STOCK', JSON.stringify(stock));
+  renderDashboard();
+}
+
+function approveTopup(id) {
+  var topups = getTopups();
+  var tIdx = topups.findIndex(x => x.id === id);
+  if(tIdx !== -1 && topups[tIdx].status === 'waiting') {
+    topups[tIdx].status = 'approved';
+    localStorage.setItem('GF_TOPUPS', JSON.stringify(topups));
+    
+    // โอนวงเงินบวกเข้ากระเป๋าของบัญชีลูกค้าคนนั้นๆ โดยตรง
+    var targetUser = topups[tIdx].user;
+    var users = getUsers();
+    if(users[targetUser]) {
+      users[targetUser].wallet = (parseFloat(users[targetUser].wallet) || 0) + topups[tIdx].amount;
+      localStorage.setItem('GF_USERS', JSON.stringify(users));
+    }
+    
+    alert('อนุมัติสลิปเติมเงินสำเร็จ! ยอดเครดิตจะถูกเติมเข้ากระเป๋าของลูกค้ารายนี้เรียบร้อย');
+    renderDashboard();
+  }
+}
+
+function renderDashboard() {
+  var stock = getStock();
+  var orders = getOrders();
+  var topups = getTopups();
+  var users = getUsers();
+
+  var totalRevenue = orders.reduce((s,o) => s + parseFloat(o.total), 0);
+  var totalViews = stock.reduce((s,p) => s + (p.views || 0), 0);
+
+  document.getElementById('st-rev').textContent = '฿' + totalRevenue.toLocaleString();
+  document.getElementById('st-count').textContent = orders.length + ' รายการ';
+  document.getElementById('st-stock').textContent = stock.length + ' รายการ';
+  document.getElementById('st-views').textContent = totalViews.toLocaleString() + ' ครั้ง';
+
+  // ตารางรายชื่อผู้ใช้งานระบบสมาชิก
+  var usersHtml = '';
+  for(var username in users) {
+    usersHtml += `
+      <tr>
+        <td><strong style="color:var(--blue)">${username}</strong></td>
+        <td style="color:var(--green)">฿${Number(users[username].wallet || 0).toLocaleString()}</td>
+      </tr>
+    `;
+  }
+  document.getElementById('users-table').innerHTML = usersHtml || '<tr><td colspan="2" style="text-align:center; color:var(--text3)">ยังไม่มีสมาชิกมาลงทะเบียน</td></tr>';
+
+  // ตารางคลังสินค้า
+  document.getElementById('stock-table').innerHTML = stock.map(p => {
+    var rates = p.ratings || [];
+    var avg = rates.length ? (rates.reduce((a,b)=>a+b,0)/rates.length).toFixed(1) : "ไม่มี";
+    return `
+      <tr>
+        <td><strong>${p.nm}</strong></td>
+        <td><span style="color:var(--orange)">${p.cat}</span></td>
+        <td>฿${Number(p.pr).toLocaleString()}</td>
+        <td style="color:var(--blue)">👁️ ${p.views || 0} ครั้ง</td>
+        <td style="color:var(--orange)">⭐ ${avg}</td>
+        <td><button onclick="delProduct('${p.id}')" style="background:rgba(255,90,90,0.15);color:#FF5A5A;padding:4px 8px">ลบ</button></td>
+      </tr>
+    `;
+  }).join('');
+
+  // ตารางคำขอเติมเงิน
+  document.getElementById('topup-table').innerHTML = topups.map(t => `
+    <tr>
+      <td>${t.id}</td>
+      <td><strong style="color:var(--blue)">${t.user || 'ไม่ระบุ'}</strong></td>
+      <td>${t.date}</td>
+      <td style="color:var(--green);font-weight:bold">฿${t.amount.toLocaleString()}</td>
+      <td>${t.status === 'waiting' ? '🟣 รอยืนยันสลิป' : '✅ อนุมัติเงินเข้าแล้ว'}</td>
+      <td>
+        ${t.status === 'waiting' ? `<button onclick="approveTopup('${t.id}')" style="padding:4px 8px;font-size:11px">✅ อนุมัติสลิปนี้</button>` : `<span style="color:var(--text2)">เรียบร้อย</span>`}
+      </td>
+    </tr>
+  `).join('');
+
+  // ตารางประวัติออเดอร์
+  document.getElementById('order-table').innerHTML = orders.map(o => `
+    <tr>
+      <td>${o.id}</td>
+      <td><strong style="color:var(--blue)">${o.name}</strong></td>
+      <td style="color:var(--green)">฿${Number(o.total).toLocaleString()}</td>
+      <td>${o.date}</td>
+      <td style="color:var(--green)">✓ จ่ายผ่านกระเป๋าเงิน</td>
+    </tr>
+  `).join('');
+}
+
+window.onload = function() {
+  if(localStorage.getItem('GF_ADMIN_LOGGED') === 'true') {
+    showPanel();
+  }
+};
+</script>
+</body>
+</html>
