@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GrowthFile Shop — แพลตฟอร์มเรียนรู้ยุคใหม่</title>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green: #00C896; --green-dark: #00A87C; --green-dim: rgba(0,200,150,0.12); --green-glow: rgba(0,200,150,0.25);
+  --bg: #0B0F1A; --bg2: #111827; --bg3: #1A2234; --bg4: #202C42;
+  --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.12);
+  --text: #F0F4FF; --text2: #8B9BB8; --text3: #5A6A85; --red: #FF5A5A; --orange: #FF9F43; --blue: #4A9EFF; --radius: 14px; --radius-sm: 8px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'IBM Plex Sans Thai',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+input,select,textarea,button{font-family:inherit;font-size:14px;outline:none}
+input,select,textarea{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:10px 14px;color:var(--text)}
+input:focus,select:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--green-dim)}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(11,15,26,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px;height:65px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Prompt',sans-serif;font-weight:800;font-size:1.3rem;color:var(--text);cursor:pointer}
+.logo em{color:var(--green);font-style:normal}
+.header-actions{display:flex;align-items:center;gap:14px}
+.wallet-badge{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:6px 12px;font-size:13px;display:flex;align-items:center;gap:6px}
+.cartbtn{background:var(--green-dim);border:1px solid var(--green);border-radius:var(--radius-sm);padding:7px 16px;font-size:13px;cursor:pointer;color:var(--green);font-weight:600;position:relative}
+.cartbadge{position:absolute;top:-6px;right:-6px;background:var(--red);color:#fff;font-size:10px;font-weight:700;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center}
+.page{padding:32px 24px; max-width:1200px; margin: 0 auto;}
+
+.about-box{background:linear-gradient(135deg, var(--bg2), var(--bg3));border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:32px;display:flex;flex-direction:column;gap:10px}
+.about-box h2{font-family:'Prompt',sans-serif;color:var(--green);font-size:1.4rem}
+.about-box p{color:var(--text2);font-size:14px;line-height:1.6}
+.about-meta{font-size:12px;color:var(--text3);margin-top:6px}
+
+.cat-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+.cat-btn{padding:7px 18px;border-radius:20px;border:1px solid var(--border2);background:transparent;font-size:12px;cursor:pointer;color:var(--text2);font-weight:500;transition:all 0.2s}
+.cat-btn.act{background:var(--green-dim);color:var(--green);border-color:var(--green)}
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:24px}
+.pcard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all .2s;position:relative;display:flex;flex-direction:column}
+.pcard:hover{border-color:var(--green);transform:translateY(-4px);box-shadow:0 8px 20px rgba(0,0,0,0.3)}
+.pimg-box{height:160px;background:linear-gradient(135deg,var(--bg3),var(--bg4));display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.pimg-box img{width:100%;height:100%;object-fit:cover}
+.pbadge{position:absolute;top:10px;left:10px;background:rgba(11,15,26,0.75);backdrop-filter:blur(5px);color:var(--blue);font-size:10px;padding:3px 10px;border-radius:20px;border:1px solid rgba(74,158,255,0.2)}
+.pviews{position:absolute;top:10px;right:10px;background:rgba(11,15,26,0.75);backdrop-filter:blur(5px);color:var(--text2);font-size:10px;padding:3px 8px;border-radius:20px}
+.pbody{padding:18px;flex:1;display:flex;flex-direction:column}
+.pname{font-size:16px;font-weight:600;margin-bottom:6px;font-family:'Prompt',sans-serif;color:var(--text)}
+.rating-display{color:var(--orange);font-size:12px;margin-bottom:12px;display:flex;align-items:center;gap:4px}
+.pcard-footer{display:flex;justify-content:space-between;align-items:center;margin-top:auto}
+.pprice{font-size:18px;font-weight:700;color:var(--green)}
+.addbtn{background:var(--green-dim);border:1px solid var(--green);color:var(--green);border-radius:var(--radius-sm);padding:6px 14px;cursor:pointer;font-weight:600;transition:all 0.2s}
+.addbtn:hover{background:var(--green);color:#0B0F1A}
+
+.cartside{position:fixed;right:-420px;top:0;bottom:0;width:380px;background:var(--bg2);border-left:1px solid var(--border2);z-index:200;transition:right .25s;display:flex;flex-direction:column}
+.cartside.open{right:0}
+.overlay-bg{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:199;display:none;backdrop-filter:blur(4px)}
+.overlay-bg.open{display:block}
+.carthdr{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.cartitems{flex:1;overflow-y:auto;padding:20px}
+.cartfoot{padding:20px;border-top:1px solid var(--border);background:var(--bg3)}
+.btn-green{width:100%;background:var(--green);color:#0B0F1A;border:none;padding:12px;border-radius:var(--radius-sm);font-weight:700;cursor:pointer;transition:all 0.2s;text-align:center}
+.btn-green:hover{background:var(--green-dark)}
+.modal-wrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:300;align-items:center;justify-content:center;backdrop-filter:blur(5px)}
+.modal-wrap.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:26px;width:90%;max-width:460px;position:relative}
+.nodata{text-align:center;padding:40px;color:var(--text3);font-size:14px}
+.star-rating{display:flex;gap:6px;margin:12px 0;justify-content:center}
+.star{font-size:28px;cursor:pointer;color:var(--text3);transition:color 0.1s}
+.star.active{color:var(--orange)}
+
+/* Auth Box Style */
+.auth-box{max-width:400px;margin:80px auto;background:var(--bg2);padding:32px;border-radius:var(--radius);border:1px solid var(--border);text-align:center}
+.auth-toggle{font-size:12px;color:var(--blue);cursor:pointer;margin-top:14px;display:inline-block;text-decoration:underline}
+.user-badge{font-size:12px;color:var(--text2);background:var(--bg4);padding:4px 10px;border-radius:20px;border:1px solid var(--border)}
+</style>
+</head>
+<body>
+
+<div id="auth-section" class="auth-box" style="display:none;">
+  <h2 id="auth-title" style="font-family:'Prompt',sans-serif;margin-bottom:8px">🔑 เข้าสู่ระบบสมาชิก</h2>
+  <p id="auth-desc" style="font-size:12px;color:var(--text2);margin-bottom:20px">เข้าสู่ระบบเพื่อเข้าถึงกระเป๋าเงินและไฟล์ความรู้ของคุณ</p>
+  
+  <div style="margin-bottom:12px; text-align:left;">
+    <label style="font-size:12px;color:var(--text2)">ชื่อผู้ใช้งาน (Username)</label>
+    <input type="text" id="auth-user" placeholder="ระบุชื่อผู้ใช้งาน">
+  </div>
+  <div style="margin-bottom:16px; text-align:left;">
+    <label style="font-size:12px;color:var(--text2)">รหัสผ่าน (Password)</label>
+    <input type="password" id="auth-pass" placeholder="ระบุรหัสผ่าน">
+  </div>
+  
+  <button class="btn-green" id="auth-submit-btn" onclick="handleAuthSubmit()">เข้าสู่ระบบทันที</button>
+  <span class="auth-toggle" id="auth-toggle-mode" onclick="toggleAuthMode()">ยังไม่มีบัญชี? สมัครเข้าเรียนรู้ยุคใหม่ที่นี่</span>
+</div>
+
+<div id="main-shop-section" style="display:none;">
+  <div class="topbar">
+    <div class="logo" onclick="location.reload()">Growth<em>File</em> Shop</div>
+    <div class="header-actions">
+      <span class="user-badge">👤 สวัสดี: <strong id="current-username-lbl" style="color:var(--blue)">-</strong></span>
+      <div class="wallet-badge">
+        <span>🪙 <span id="lb-wallet-title">กระเป๋าเงิน:</span></span>
+        <strong style="color:var(--green)" id="wallet-val">฿0</strong>
+        <button onclick="openWalletModal()" style="background:var(--green);border:none;color:#0B0F1A;padding:2px 6px;border-radius:4px;font-size:11px;font-weight:bold;cursor:pointer;margin-left:4px">+ เติมเงิน</button>
+      </div>
+      <select class="lang-select" onchange="chgLang(this.value)" style="width:auto;padding:4px 8px;background:var(--bg3);color:var(--text);border:1px solid var(--border2);border-radius:6px;cursor:pointer">
+        <option value="th">🇹🇭 ภาษาไทย</option>
+        <option value="en">🇺🇸 English</option>
+      </select>
+      <button class="cartbtn" onclick="openCart()">🛒 <span id="lb-cart">ตะกร้า</span> <span class="cartbadge" id="cbadge">0</span></button>
+      <button onclick="userLogout()" style="background:rgba(255,90,90,0.15); border:none; color:#FF5A5A; padding:6px 12px; border-radius:var(--radius-sm); cursor:pointer; font-size:12px;">ออกจากระบบ</button>
+    </div>
+  </div>
+
+  <div class="page">
+    <div class="about-box">
+      <h2 id="ab-title">📖 เรื่องราวการเดินทางของเรา (About GrowthFile)</h2>
+      <p id="ab-desc">เราก่อตั้งขึ้นด้วยความตั้งใจอันแรงกล้าที่จะส่งมอบ "ระบบปฏิบัติการทางความคิด" เครื่องมือในการพัฒนาตนเอง และชุดความรู้การเงินคุณภาพสูง เพื่อช่วยให้ทุกคนสามารถปลดล็อกขีดจำกัดเดิมและก้าวเข้าสู่ความเป็นมืออาชีพได้อย่างยั่งยืน คลังเอกสาร E-book และเครื่องมือทั้งหมดภายในแพลตฟอร์มนี้เป็นเนื้อหาของจริงที่ผ่านการกลั่นกรองเพื่อผลลัพธ์ที่ดีที่สุดของคุณ</p>
+      <div class="about-meta" id="ab-date">📅 วันที่ก่อตั้งบริษัท: 14 กุมภาพันธ์ 2024</div>
+    </div>
+
+    <div class="cat-row" id="catrow"></div>
+    <div class="prod-grid" id="pgrid"></div>
+  </div>
+</div>
+
+<div class="overlay-bg" id="covl" onclick="closeCart()"></div>
+<div class="cartside" id="cside">
+  <div class="carthdr"><h3 id="lb-cart-title">🛒 ตะกร้าสินค้าของคุณ</h3><button onclick="closeCart()" style="background:none;border:none;color:var(--text);cursor:pointer;font-size:16px">✕</button></div>
+  <div class="cartitems" id="citems"></div>
+  <div class="cartfoot" id="cfoot" style="display:none">
+    <div style="display:flex;justify-content:between;margin-bottom:12px"><span id="lb-total">รวมทั้งหมด:</span> <span id="ctot" style="color:var(--green);font-weight:700;margin-left:auto">฿0</span></div>
+    <div style="font-size:11px;color:var(--text2);margin-bottom:8px;text-align:right" id="wallet-check-msg"></div>
+    <button class="btn-green" onclick="processPayment()" id="lb-checkout-btn">ชำระเงินด้วยกระเป๋าเงินทันที</button>
+  </div>
+</div>
+
+<div class="modal-wrap" id="mwallet">
+  <div class="modal">
+    <button onclick="closeWalletModal()" style="position:absolute;top:14px;right:16px;background:none;border:none;color:var(--text);cursor:pointer">✕</button>
+    <h3 style="margin-bottom:16px">🪙 ส่งคำขอเติมเงินเข้าระบบ</h3>
+    <div style="background:var(--bg3);padding:14px;border-radius:8px;margin-bottom:14px;font-size:13px;line-height:1.6;border:1px solid var(--border)">
+      🏦 <strong>ธนาคารกสิกรไทย (บัญชีบริษัทกลาง)</strong><br>
+      เลขที่บัญชี: <span style="color:var(--green);font-weight:700">162-1-16847-5</span><br>
+      ชื่อบัญชี: นายชยานนท์ ช้างน้อย
+    </div>
+    <div style="margin-bottom:12px"><label style="font-size:12px;color:var(--text2)">จำนวนเงินที่โอนชำระ (บาท)</label><input type="number" id="wp-amount" placeholder="เช่น 59, 100, 500"></div>
+    <div style="margin-bottom:16px"><label style="font-size:12px;color:var(--text2)">แนบหลักฐานสลิปโอนเงิน</label><input type="file" id="wp-slip" accept="image/*"></div>
+    <button class="btn-green" onclick="submitTopup()">ส่งหลักฐานแจ้งเติมเงิน</button>
+  </div>
+</div>
+
+<div class="modal-wrap" id="mdownload">
+  <div class="modal" style="text-align:center">
+    <h3 style="color:var(--green);margin-bottom:10px">🎉 สั่งซื้อสำเร็จเรียบร้อย!</h3>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:16px">คุณสามารถเข้าถึงคลังไฟล์เนื้อหาจริงและลิงก์เสริมได้ที่นี่</p>
+    <div id="download-links-box" style="margin-bottom:20px"></div>
+    
+    <div style="border-top:1px solid var(--border);padding-top:16px">
+      <h4 style="font-family:'Prompt',sans-serif;font-size:14px">⭐ ให้คะแนนรีวิวสินค้านี้เพื่อพัฒนาต่อ</h4>
+      <div class="star-rating" id="star-box">
+        <span class="star" onclick="setStar(1)">★</span><span class="star" onclick="setStar(2)">★</span><span class="star" onclick="setStar(3)">★</span><span class="star" onclick="setStar(4)">★</span><span class="star" onclick="setStar(5)">★</span>
+      </div>
+      <button class="btn-green" onclick="submitReview()" style="padding:6px;font-size:12px">บันทึกคะแนนรีวิว</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var LANG = {
+  th: { cart: "ตะกร้า", total: "รวมทั้งหมด:", title: "ตะกร้าสินค้าของคุณ", wtitle:"กระเป๋าเงิน:", btn: "ชำระเงินด้วยกระเป๋าเงินทันที", empty: "ไม่มีสินค้าในตะกร้า" },
+  en: { cart: "Cart", total: "Total:", title: "Your Shopping Cart", wtitle:"Wallet:", btn: "Pay with Wallet Instantly", empty: "Cart is empty" }
+};
+var curLang = 'th';
+var cart = [];
+var selectedRating = 5;
+var currentReviewingProdId = null;
+var isLoginMode = true; // สำหรับสลับหน้า Login / Register
+
+// ฟังก์ชัน Core จัดการบัญชีผู้ใช้
+function getUsers() { return JSON.parse(localStorage.getItem('GF_USERS')) || {}; }
+function setUsers(users) { localStorage.setItem('GF_USERS', JSON.stringify(users)); }
+function getLoggedInUser() { return localStorage.getItem('GF_CURRENT_USER'); }
+
+function checkUserSession() {
+  var user = getLoggedInUser();
+  if (user) {
+    document.getElementById('auth-section').style.display = 'none';
+    document.getElementById('main-shop-section').style.display = 'block';
+    document.getElementById('current-username-lbl').textContent = user;
+    updateWalletUI();
+    renderProducts();
+  } else {
+    document.getElementById('auth-section').style.display = 'block';
+    document.getElementById('main-shop-section').style.display = 'none';
+  }
+}
+
+function toggleAuthMode() {
+  isLoginMode = !isLoginMode;
+  if(isLoginMode) {
+    document.getElementById('auth-title').textContent = "🔑 เข้าสู่ระบบสมาชิก";
+    document.getElementById('auth-desc').textContent = "เข้าสู่ระบบเพื่อเข้าถึงกระเป๋าเงินและไฟล์ความรู้ของคุณ";
+    document.getElementById('auth-submit-btn').textContent = "เข้าสู่ระบบทันที";
+    document.getElementById('auth-toggle-mode').textContent = "ยังไม่มีบัญชี? สมัครเข้าเรียนรู้ยุคใหม่ที่นี่";
+  } else {
+    document.getElementById('auth-title').textContent = "📝 สมัครสมาชิกใหม่";
+    document.getElementById('auth-desc').textContent = "สร้างบัญชีผู้ใช้เพื่อเข้าร่วมเป็นหนึ่งในการเติบโตทางความคิด";
+    document.getElementById('auth-submit-btn').textContent = "ยืนยันการสมัครสมาชิก";
+    document.getElementById('auth-toggle-mode').textContent = "มีบัญชีอยู่แล้ว? เปลี่ยนไปเข้าสู่ระบบ";
+  }
+}
+
+function handleAuthSubmit() {
+  var user = document.getElementById('auth-user').value.trim();
+  var pass = document.getElementById('auth-pass').value.trim();
+  
+  if(!user || !pass) { alert('กรุณากรอกข้อมูลให้ครบถ้วน'); return; }
+  
+  var users = getUsers();
+  
+  if(isLoginMode) {
+    // โหมดเข้าสู่ระบบ
+    if(users[user] && users[user].password === pass) {
+      localStorage.setItem('GF_CURRENT_USER', user);
+      document.getElementById('auth-user').value = '';
+      document.getElementById('auth-pass').value = '';
+      checkUserSession();
+    } else {
+      alert('ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง!');
+    }
+  } else {
+    // โหมดสมัครสมาชิก
+    if(users[user]) {
+      alert('ชื่อผู้ใช้งานนี้มีผู้ใช้ในระบบแล้ว!');
+      return;
+    }
+    users[user] = { password: pass, wallet: 0 };
+    setUsers(users);
+    alert('สมัครสมาชิกสำเร็จแล้ว! ระบบจะเปลี่ยนไปยังหน้าล็อกอินโดยอัตโนมัติ');
+    isLoginMode = false;
+    toggleAuthMode();
+  }
+}
+
+function userLogout() {
+  localStorage.removeItem('GF_CURRENT_USER');
+  cart = [];
+  document.getElementById('cbadge').textContent = 0;
+  checkUserSession();
+}
+
+function getStock() { return JSON.parse(localStorage.getItem('GF_STOCK')) || []; }
+
+function getWallet() { 
+  var user = getLoggedInUser();
+  if(!user) return 0;
+  var users = getUsers();
+  return users[user] ? parseFloat(users[user].wallet || 0) : 0; 
+}
+
+function setWallet(v) { 
+  var user = getLoggedInUser();
+  if(!user) return;
+  var users = getUsers();
+  if(users[user]) {
+    users[user].wallet = v;
+    setUsers(users);
+    updateWalletUI();
+  }
+}
+
+function updateWalletUI() {
+  document.getElementById('wallet-val').textContent = '฿' + getWallet().toLocaleString();
+}
+
+function chgLang(v) {
+  curLang = v;
+  document.getElementById('lb-cart').textContent = LANG[v].cart;
+  document.getElementById('lb-cart-title').textContent = LANG[v].title;
+  document.getElementById('lb-total').textContent = LANG[v].total;
+  document.getElementById('lb-checkout-btn').textContent = LANG[v].btn;
+  document.getElementById('lb-wallet-title').textContent = LANG[v].wtitle;
+}
+
+function renderProducts() {
+  var stock = getStock();
+  var cats = ['all', 'Mind set finance', 'การพัฒนาตัวเอง', 'อื่นๆ'];
+  document.getElementById('catrow').innerHTML = cats.map(c => `<button class="cat-btn ${c==='all'?'act':''}" onclick="filterCat('${c}', this)">${c==='all'?'🏠 ทั้งหมด':c}</button>`).join('');
+  displayProducts(stock);
+}
+
+function displayProducts(items) {
+  var grid = document.getElementById('pgrid');
+  if(!items.length) { grid.innerHTML = '<div class="nodata">ยังไม่มีคลังสินค้าในระบบขณะนี้</div>'; return; }
+  
+  grid.innerHTML = items.map(p => {
+    var views = p.views || 0;
+    var rates = p.ratings || [];
+    var avgRate = rates.length ? (rates.reduce((a,b)=>a+b,0)/rates.length).toFixed(1) : "ยังไม่มีรีวิว";
+    var starsStr = rates.length ? `⭐ ${avgRate} (${rates.length} คน)` : "⭐ ใหม่ล่าสุด";
+    var imgHtml = p.cover ? `<img src="${p.cover}">` : `<span style="font-size:3.5rem">📄</span>`;
+    
+    return `
+      <div class="pcard" onclick="trackView('${p.id}')">
+        <div class="pimg-box">
+          ${imgHtml}
+          <span class="pbadge">${p.cat}</span>
+          <span class="pviews">👁️ ${views}</span>
+        </div>
+        <div class="pbody">
+          <div class="pname">${p.nm}</div>
+          <div class="rating-display">${starsStr}</div>
+          <div class="pcard-footer">
+            <span class="pprice">฿${Number(p.pr).toLocaleString()}</span>
+            <button class="addbtn" onclick="event.stopPropagation(); addCart('${p.id}')">+ ซื้อ</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function trackView(id) {
+  var stock = getStock();
+  var idx = stock.findIndex(x => x.id === id);
+  if(idx !== -1) {
+    stock[idx].views = (stock[idx].views || 0) + 1;
+    localStorage.setItem('GF_STOCK', JSON.stringify(stock));
+    renderProducts();
+  }
+}
+
+function filterCat(c, btn) {
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('act'));
+  btn.classList.add('act');
+  var stock = getStock();
+  if(c === 'all') displayProducts(stock);
+  else displayProducts(stock.filter(p => p.cat === c));
+}
+
+function addCart(id) {
+  var p = getStock().find(x => x.id === id);
+  if(!p) return;
+  cart.push(p);
+  document.getElementById('cbadge').textContent = cart.length;
+  openCart();
+}
+
+function openCart() { 
+  document.getElementById('cside').classList.add('open'); 
+  document.getElementById('covl').classList.add('open'); 
+  renderCart(); 
+}
+function closeCart() { 
+  document.getElementById('cside').classList.remove('open'); 
+  document.getElementById('covl').classList.remove('open'); 
+}
+
+function renderCart() {
+  var el = document.getElementById('citems');
+  if(!cart.length) { el.innerHTML = `<div class="nodata">${LANG[curLang].empty}</div>`; document.getElementById('cfoot').style.display='none'; return; }
+  document.getElementById('cfoot').style.display='block';
+  el.innerHTML = cart.map((i) => `<div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)"><span>${i.nm}</span><strong>฿${Number(i.pr).toLocaleString()}</strong></div>`).join('');
+  
+  var tot = cart.reduce((s,i) => s + parseFloat(i.pr), 0);
+  document.getElementById('ctot').textContent = '฿' + tot.toLocaleString();
+  
+  var msgEl = document.getElementById('wallet-check-msg');
+  if(getWallet() < tot) {
+    msgEl.style.color = 'var(--red)';
+    msgEl.textContent = '❌ ยอดเงินในกระเป๋าไม่เพียงพอ กรุณากดเติมเงินและรอแอดมินอนุมัติ';
+    document.getElementById('lb-checkout-btn').disabled = true;
+    document.getElementById('lb-checkout-btn').style.opacity = '0.4';
+  } else {
+    msgEl.style.color = 'var(--green)';
+    msgEl.textContent = '✅ ยอดเงินเพียงพอ สามารถหักจ่ายและรับไฟล์ได้ทันที';
+    document.getElementById('lb-checkout-btn').disabled = false;
+    document.getElementById('lb-checkout-btn').style.opacity = '1';
+  }
+}
+
+function processPayment() {
+  var tot = cart.reduce((s,i) => s + parseFloat(i.pr), 0);
+  if(getWallet() < tot) return;
+  
+  setWallet(getWallet() - tot);
+  
+  // บันทึกออเดอร์โดยใช้ชื่อ Account ของลูกค้าจริงที่ล็อกอินอยู่
+  var orders = JSON.parse(localStorage.getItem('GF_ORDERS')) || [];
+  var newOrderId = 'ORD-' + Date.now();
+  orders.push({ id: newOrderId, name: getLoggedInUser(), items: cart, total: tot, date: new Date().toLocaleString(), status: 'approved' });
+  localStorage.setItem('GF_ORDERS', JSON.stringify(orders));
+  
+  var linksBox = document.getElementById('download-links-box');
+  linksBox.innerHTML = cart.map(item => `
+    <div style="background:var(--bg3);padding:12px;border-radius:6px;margin-bottom:8px;text-align:left;border:1px solid var(--border)">
+      <div style="font-weight:600;margin-bottom:6px">📂 ${item.nm}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <a href="${item.pdf}" target="_blank" style="background:var(--green);color:#0B0F1A;padding:4px 10px;border-radius:4px;text-decoration:none;font-size:12px;font-weight:bold">🔗 ลิงก์ไฟล์หลัก (PDF)</a>
+        ${item.extralink ? `<a href="${item.extralink}" target="_blank" style="background:var(--blue);color:#fff;padding:4px 10px;border-radius:4px;text-decoration:none;font-size:12px">🔗 ลิงก์ช่องทางเสริม/คอร์ส</a>` : ''}
+      </div>
+    </div>
+  `).join('');
+  
+  currentReviewingProdId = cart[0].id;
+  cart = [];
+  document.getElementById('cbadge').textContent = 0;
+  closeCart();
+  
+  document.getElementById('mdownload').classList.add('open');
+  setStar(5);
+}
+
+function setStar(num) {
+  selectedRating = num;
+  var stars = document.querySelectorAll('#star-box .star');
+  stars.forEach((s, idx) => {
+    if(idx < num) s.classList.add('active');
+    else s.classList.remove('active');
+  });
+}
+
+function submitReview() {
+  if(!currentReviewingProdId) return;
+  var stock = getStock();
+  var idx = stock.findIndex(x => x.id === currentReviewingProdId);
+  if(idx !== -1) {
+    if(!stock[idx].ratings) stock[idx].ratings = [];
+    stock[idx].ratings.push(selectedRating);
+    localStorage.setItem('GF_STOCK', JSON.stringify(stock));
+  }
+  alert('ขอบพระคุณสำหรับคะแนนรีวิวครับ!');
+  document.getElementById('mdownload').classList.remove('open');
+  renderProducts();
+}
+
+function openWalletModal() { document.getElementById('mwallet').classList.add('open'); }
+function closeWalletModal() { document.getElementById('mwallet').classList.remove('open'); }
+
+function submitTopup() {
+  var amt = document.getElementById('wp-amount').value.trim();
+  var slip = document.getElementById('wp-slip').files[0];
+  if(!amt || !slip) { alert('กรุณาระบุยอดเงินและแนบหลักฐานสลิปการโอน'); return; }
+  
+  var topups = JSON.parse(localStorage.getItem('GF_TOPUPS')) || [];
+  topups.push({ id: 'TOP-'+Date.now(), user: getLoggedInUser(), amount: parseFloat(amt), date: new Date().toLocaleString(), status: 'waiting' });
+  localStorage.setItem('GF_TOPUPS', JSON.stringify(topups));
+  
+  alert('ส่งหลักฐานสลิปเติมเงินสำเร็จแล้ว! โปรดรอผู้ดูแลระบบตรวจสอบและกดยืนยันยอดเงินหลังบ้าน');
+  closeWalletModal();
+}
+
+window.onload = function() {
+  checkUserSession();
+};
+</script>
+</body>
+</html>
