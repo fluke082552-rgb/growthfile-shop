@@ -452,6 +452,12 @@ function submitTopup() {
 window.onload = function() {
   checkUserSession();
 };
+  // --- วางโค้ดตรงนี้ ก่อนบรรทัด </script> ---
+window.addEventListener('DOMContentLoaded', function() {
+    renderProducts(); 
+});
+// ----------------------------------------
+</script>
 </script>
 </body>
 </html>
