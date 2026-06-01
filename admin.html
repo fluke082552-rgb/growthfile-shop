@@ -290,11 +290,13 @@ function renderDashboard() {
   `).join('');
 }
 
-window.onload = function() {
-  if(localStorage.getItem('GF_ADMIN_LOGGED') === 'true') {
-    showPanel();
-  }
-};
+<script>
+    // สั่งให้โหลดข้อมูลสินค้าทันทีที่เว็บโหลดเสร็จ
+    window.addEventListener('DOMContentLoaded', function() {
+        if (typeof renderProducts === 'function') {
+            renderProducts();
+        }
+    });
 </script>
 </body>
 </html>
